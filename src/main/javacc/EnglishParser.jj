@@ -1,0 +1,48 @@
+options {
+   STATIC = false;
+}
+
+PARSER_BEGIN(EnglishParser)
+
+package com.swingler.concordance_generator;
+
+import java.io.InputStream;
+
+public class EnglishParser {
+  public static Concordance parse(Concordance concordance, InputStream istream) throws ParseException {
+    EnglishParser parser = new EnglishParser(istream);
+    parser.start(concordance);
+    return concordance;
+  }
+}
+
+PARSER_END(EnglishParser)
+
+SKIP : { " " | "\t" | "\n" | "\r" | "\r\n" | ":" | "," | "\"" | "(" | ")" | "[" | "]" | ";" | "/" | "\\" }
+
+void start(Concordance concordance) :
+{
+  Token token = null;
+  String key = null;
+  int sentenceCounter = 1;
+}
+{
+	(
+	(token=<WORD> { 
+		key = token.image;
+		key = key.toLowerCase();
+		WordOccurrance wordOccurrance = concordance.get(key);
+		if(wordOccurrance == null) wordOccurrance = new WordOccurrance();
+		wordOccurrance.insert(sentenceCounter);
+		concordance.put(key, wordOccurrance);
+    }
+	)+ 
+	(token=<SENT_END> {
+		sentenceCounter++;
+	}
+	)* 
+	)+ <EOF>
+}
+
+TOKEN: { < SENT_END : ("!\""|"!'"|"!"|"?\""|"?'"|"?"|".\""|".'"|".")+ > }
+TOKEN: { < WORD : (~[".","!","?"," ","\t","\r","\n",":",",","\"", "(", ")", "[", "]", ";", "/", "\\"])+ | "i.e." | "e.g." > }
