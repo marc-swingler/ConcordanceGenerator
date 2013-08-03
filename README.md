@@ -1,4 +1,0 @@
-ConcordanceGenerator
-====================
-
-ConcordanceGenerator
