@@ -9,10 +9,9 @@ package com.swingler.concordance_generator;
 import java.io.InputStream;
 
 public class EnglishParser {
-  public static Concordance parse(Concordance concordance, InputStream istream) throws ParseException {
+  public static void parse(Concordance concordance, InputStream istream) throws ParseException {
     EnglishParser parser = new EnglishParser(istream);
     parser.start(concordance);
-    return concordance;
   }
 }
 
@@ -31,10 +30,7 @@ void start(Concordance concordance) :
 	(token=<WORD> { 
 		key = token.image;
 		key = key.toLowerCase();
-		WordOccurrance wordOccurrance = concordance.get(key);
-		if(wordOccurrance == null) wordOccurrance = new WordOccurrance();
-		wordOccurrance.insert(sentenceCounter);
-		concordance.put(key, wordOccurrance);
+		concordance.put(key, sentenceCounter);
     }
 	)+ 
 	(token=<SENT_END> {
