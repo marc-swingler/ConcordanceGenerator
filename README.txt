@@ -32,7 +32,7 @@ Design Consierations:
 	language parser of my own, or looking for a natural language parser library. I did briefly consider using OpenNLP. I decided against it because I think the purpose of the task was probably more to
 	demonstrate general programmig skills rather than circumventing the problem through a library. So with that in mind, I opened my old 'Algorithms' text book and implemented a Red-Black tree to serve as
 	the data structure backing my concordance. Next, I wrote a simple parser called 'EnglishParser' using Javacc. The parser has a static method, parse, which takes two arguments: an interface named
-	Concordance and an InputStream. (Using an interface decouples classes ConcordanceImpl and RedBlackTree from the classes EnglishParser.) Please contact me if you have any questions.
+	Concordance and an InputStream. (Using an interface decouples classes ConcordanceImpl from the classes EnglishParser.) Please contact me if you have any questions.
 
 Marc Swingler
 marc.swingler@gmail.com

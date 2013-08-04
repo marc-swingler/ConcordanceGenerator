@@ -1,6 +1,8 @@
 package com.swingler.concordance_generator;
 
 public interface Concordance {
-	public void put(String key, int sentenceCounter);
+	public void addWord(String token);
+	public void addSentEnd(String token);
+	public void addOther(String token);
 	public void print();
 }

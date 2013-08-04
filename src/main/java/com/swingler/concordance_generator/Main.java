@@ -63,12 +63,14 @@ public class Main {
 		System.out.println("The generated concordance will be printed to a file named concordance.txt.");
 	}
 
-	public static void printConcordance(String filename) throws FileNotFoundException, ParseException {
-		FileInputStream fistream = new FileInputStream(filename);
+	public static void printConcordance(String filename) throws FileNotFoundException, ParseException, IOException {
 		Concordance concordance = new ConcordanceImpl();
-		EnglishParser.parse(concordance, fistream);
-		try { fistream.close(); }
-		catch(IOException ex) { ex.printStackTrace(); }
-		concordance.print();
+		FileInputStream fistream = null;
+		try {
+			fistream = new FileInputStream(filename);
+			EnglishParser.parse(concordance, fistream);
+			concordance.print();
+		}
+		finally { fistream.close(); }
 	}
 }

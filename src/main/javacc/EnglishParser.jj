@@ -17,28 +17,20 @@ public class EnglishParser {
 
 PARSER_END(EnglishParser)
 
-SKIP : { " " | "\t" | "\n" | "\r" | "\r\n" | ":" | "," | "\"" | "(" | ")" | "[" | "]" | ";" | "/" | "\\" }
-
 void start(Concordance concordance) :
 {
   Token token = null;
-  String key = null;
-  int sentenceCounter = 1;
 }
 {
 	(
-	(token=<WORD> { 
-		key = token.image;
-		key = key.toLowerCase();
-		concordance.put(key, sentenceCounter);
-    }
-	)+ 
-	(token=<SENT_END> {
-		sentenceCounter++;
-	}
-	)* 
+		token=<OTHER> { concordance.addOther(token.image); }
+		|
+		token=<WORD> { concordance.addWord(token.image); }
+    	|
+		token=<SENT_END> { concordance.addSentEnd(token.image); }
 	)+ <EOF>
 }
 
+TOKEN: { < OTHER : (" " | "\t" | "\r" | "\n" | ":" | "," | "\"" | "(" | ")" | "[" | "]" | ";" | "/" | "\\")+ > }
+TOKEN: { < WORD : (~[".", "!", "?", " ", "\t", "\r", "\n", ":", "," ,"\"", "(", ")", "[", "]", ";", "/", "\\"])+ | "i.e." | "e.g." > }
 TOKEN: { < SENT_END : ("!\""|"!'"|"!"|"?\""|"?'"|"?"|".\""|".'"|".")+ > }
-TOKEN: { < WORD : (~[".","!","?"," ","\t","\r","\n",":",",","\"", "(", ")", "[", "]", ";", "/", "\\"])+ | "i.e." | "e.g." > }
