@@ -23,14 +23,14 @@ void start(Concordance concordance) :
 }
 {
 	(
-		token=<OTHER> { concordance.addOther(token.image); }
-		|
 		token=<WORD> { concordance.addWord(token.image); }
     	|
 		token=<SENT_END> { concordance.addSentEnd(token.image); }
+		|
+		token=<OTHER> { concordance.addOther(token.image); }
 	)+ <EOF>
 }
 
-TOKEN: { < OTHER : (" " | "\t" | "\r" | "\n" | ":" | "," | "\"" | "(" | ")" | "[" | "]" | ";" | "/" | "\\")+ > }
-TOKEN: { < WORD : (~[".", "!", "?", " ", "\t", "\r", "\n", ":", "," ,"\"", "(", ")", "[", "]", ";", "/", "\\"])+ | "i.e." | "e.g." > }
+TOKEN: { < WORD : ((["a"-"z", "A"-"Z", "0"-"9", "'", "-"])+((".")(["a"-"z", "A"-"Z", "0"-"9", "'", "-"])+)*)+ | "i.e." > }
 TOKEN: { < SENT_END : ("!\""|"!'"|"!"|"?\""|"?'"|"?"|".\""|".'"|".")+ > }
+TOKEN: { < OTHER : ~[] > }

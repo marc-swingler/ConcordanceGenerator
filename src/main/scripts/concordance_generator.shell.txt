@@ -14,4 +14,4 @@ main() {
 	java -cp $CLASSPATH com.swingler.concordance_generator.Main $@
 }
 
-main $@ > concordance.txt
+main $@

@@ -3,9 +3,8 @@ SETLOCAL EnableDelayedExpansion
 
 SET SCRIPT_HOME=%~dp0%
 SET SCRIPT_HOME=%SCRIPT_HOME:~0,-1%
-CD /D "%SCRIPT_HOME%"
-SET LOG_FILE=concordance.txt
-CALL :main %* > %LOG_FILE% 2>&1
+CD /D "%SCRIPT_HOME%
+CALL :main %*
 GOTO :EOF
 
 :genClassPath

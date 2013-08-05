@@ -1,5 +1,6 @@
 package com.swingler.concordance_generator;
 
+import java.io.PrintStream;
 import java.util.LinkedList;
 
 public class ConcordanceImpl implements Concordance {
@@ -37,9 +38,7 @@ public class ConcordanceImpl implements Concordance {
 		sentenceCounter = 1;
 	}
 
-	public void addSentEnd(String token) {
-		sentenceCounter++;
-	}
+	public void addSentEnd(String token) { sentenceCounter++; }
 
 	public void addOther(String token) {}
 
@@ -51,5 +50,8 @@ public class ConcordanceImpl implements Concordance {
 		redBlackTree.put(key, wordOccurrance);
 	}
 
-	public void print() { for (String string : redBlackTree.keys()) System.out.println(string + ", " + redBlackTree.get(string)); }
+	public void print(PrintStream out) {
+		for (String string : redBlackTree.keys()) out.println(string + ", " + redBlackTree.get(string));
+		out.flush();
+	}
 }

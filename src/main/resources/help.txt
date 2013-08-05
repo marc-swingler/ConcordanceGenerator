@@ -1,0 +1,45 @@
+-------------------------------------------------------------------------------
+The program may be run as a Windows Batch file or as a Bash Shell script.
+    Windows Batch File: use concordance_generator.bat
+    Bash Shell Script: use concordance_generator.sh
+Both concordance_generator.bat and concordance_generator.sh work with the same
+options and defaults. The following options are available:
+    -f <filename>
+        This is the name of a document concordance_generator will use to build
+        a concordance. The file must have a plain text format. At most, one -f
+        or -u option may be used.
+    -u <urlString>
+        This is the url of a document concordance_generator will use to build a
+        concordance. The file must have a plain text format. At most, one -f or
+        -u option may be used.
+    -o <outfilename>
+        The file the concordance will be printed to. When not specified, the
+        concordance will be printed to stdout. At most, one -o option may be
+        used.
+    -h
+        Prints this help information message.
+-------------------------------------------------------------------------------
+Example Usage (Windows):
+    condcodance_generator.bat
+        Prints this help information message.
+    concordance_generator.bat -h
+        Prints this help information message.
+    concordance_generator.bat -f arbitrary.txt
+        Prints a concordance to stdout based on the file artirary.txt
+    concordance_generator.bat -u http://tinyurl.com/6da9puc -o warandpeace.txt
+        Prints a concordance to warandpeace.txt based on the URL
+    concordance_generator.bat -u http://tinyurl.com/lh33p5u -o hamlet.txt
+        Prints a concordance to hamlet.txt based on the URL
+-------------------------------------------------------------------------------
+Example Usage (*nix or Mac):
+    condcodance_generator.sh
+        Prints this help information message.
+    concordance_generator.sh -h
+        Prints this help information message.
+    concordance_generator.sh -f arbitrary.txt
+        Prints a concordance to stdout based on the file artirary.txt
+    concordance_generator.sh -u http://tinyurl.com/6da9puc -o warandpeace.txt
+        Prints a concordance to warandpeace.txt based on the URL
+    concordance_generator.sh -u http://tinyurl.com/lh33p5u -o hamlet.txt
+        Prints a concordance to hamlet.txt based on the URL
+-------------------------------------------------------------------------------

@@ -1,76 +1,145 @@
 package com.swingler.concordance_generator;
 
 import gnu.getopt.Getopt;
-
+import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.PrintStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 public class Main {
-	public static final String DEFAULT_FILENAME = "arbitrary.txt";
+	private static String helpMessage = null;
 
 	public static void main(String[] args) {
-		Getopt getopt = new Getopt("Main", args, "f:h?");
+		try { helpMessage = getHelpMessage(); }
+		catch(IOException ex) { programError(ex); }
+
+		Getopt getopt = new Getopt("Main", args, ":u:f:o:h");
+		getopt.setOpterr(false);
 		int c = Integer.MIN_VALUE;
+		String urlString = null;
 		String filename = null;
+		String outfilename = null;
+		boolean help = false;
+		boolean sourceSpecified = false;
 		while ((c = getopt.getopt()) != -1) {
 			switch(c) {
+			case 'u':
+				if(sourceSpecified) userError("At most one -f or -u option may be specified.");
+				urlString = getopt.getOptarg();
+				sourceSpecified = true;
+				break;
 			case 'f':
-				if(filename != null) {
-					System.out.println("At most one -f option may be specified.");
-					System.exit(1);
-				}
+				if(sourceSpecified) userError("At most one -f or -u option may be specified.");
 				filename = getopt.getOptarg();
+				sourceSpecified = true;
+				break;
+			case 'o':
+				if(outfilename != null) userError("At most one -o option may be specified.");
+				outfilename =getopt.getOptarg();
 				break;
 			case 'h':
-			case '?':
-				printHelp();
+				help = true;
+				break;
+			case ':':
+				userError("Valid option: -" + (char)getopt.getOptopt() + ", but requires an argument.");
 				break;
 			default:
-				System.out.println("Invalid option: -" + c);
-				System.exit(1);
+				userError("Invalid option: -" + (char)getopt.getOptopt());
 			}
 		}
 
-		if(filename == null) filename = DEFAULT_FILENAME;
-		
-		File file = new File(filename);
-		if(!file.exists()) {
-			System.out.println(filename + " does not exist.");
-			System.exit(1);
+		StringBuffer invalidArgs = new StringBuffer();
+		for (int i = getopt.getOptind(); i < args.length ; i++) {
+			invalidArgs.append(args[i] + " ");
+		}
+		if(invalidArgs.length() > 0) userError("Invalid Arguments: " + invalidArgs.toString());
+
+		if(!sourceSpecified && outfilename != null) userError("Output file specified: " + outfilename + ", but no source.");
+
+		URL url = null;
+		if(urlString != null) {
+			try { url = new URL(urlString); }
+			catch(MalformedURLException ex) { userError(urlString + " is not a valid URL."); }
 		}
 
-		try { printConcordance(filename); }
-		catch(Exception ex) {
-			ex.printStackTrace();
-			System.exit(-1);
+		File file = null;
+		if(filename != null) {
+			file = new File(filename);
+			if(!file.exists()) userError(filename + " does not exist.");
 		}
-	}
 
-	private static void printHelp() {
-		System.out.println("The program may be run as a Windows Batch file or as a Bash Shell script.");
-		System.out.println("	Windows Batch File: use concordance_generator.bat");
-		System.out.println("	Bash Shell Script: use concordance_generator.sh");
-		System.out.println("Both concordance_generator.bat and concordance_generator.sh work with the same options and defaults.");
-		System.out.println("The following options are available:");
-		System.out.println("	-f <filename>");
-		System.out.println("		This is the name of the document concordance_generator will use to build a concordance.");
-		System.out.println("		The file must have a plain text format. It defaults to 'artirary.txt' if no -f option is specified.");
-		System.out.println("		At most, one -f option may be used per run of concordance_generator.");
-		System.out.println("	-h or -?");
-		System.out.println("		Prints help information message");
-		System.out.println("The generated concordance will be printed to a file named concordance.txt.");
-	}
+		File outfile = null;
+		if(outfilename != null) outfile = new File(outfilename);
 
-	public static void printConcordance(String filename) throws FileNotFoundException, ParseException, IOException {
-		Concordance concordance = new ConcordanceImpl();
-		FileInputStream fistream = null;
 		try {
-			fistream = new FileInputStream(filename);
-			EnglishParser.parse(concordance, fistream);
-			concordance.print();
+			if(file != null && outfile != null && outfile.getCanonicalPath().equals(file.getCanonicalPath()))
+				userError("filename and outfilename refer to the same file: " + file.getCanonicalPath());
 		}
-		finally { fistream.close(); }
+		catch(IOException ex) { programError(ex); }
+
+		if(help || !sourceSpecified){
+			System.out.println(helpMessage);
+			if(!sourceSpecified) System.exit(0);
+		}
+		
+		try { generateConcordance(file, url, outfile); }
+		catch(Exception ex) { programError(ex); }
+	}
+
+	private static String getHelpMessage() throws IOException {
+		StringBuffer strbuf = new StringBuffer();
+		InputStream istream = null;
+		InputStreamReader ireader = null;
+		BufferedReader breader = null;
+		try {
+			istream = System.class.getClass().getResourceAsStream("/help.txt");
+			ireader = new InputStreamReader(istream);
+			breader = new BufferedReader(ireader);
+			while(breader.ready()) { strbuf.append(breader.readLine() + System.getProperty("line.separator")); }
+		}
+		finally {
+			if(breader != null) breader.close();
+			if(ireader != null) ireader.close();
+			if(istream != null) istream.close();
+		}
+		return strbuf.toString();
+	}
+
+	private static void programError(Exception ex) {
+		System.out.println("-------------------------------------------------------------------------------");
+		System.out.println("!!!PROGRAM ERROR!!!");
+		System.out.println("-------------------------------------------------------------------------------");
+		ex.printStackTrace();
+		System.out.println("-------------------------------------------------------------------------------");
+		System.exit(-1);		
+	}
+
+	private static void userError(String message) {
+		System.err.println("-------------------------------------------------------------------------------");
+		System.err.println("USER ERROR:");
+		System.err.println("-------------------------------------------------------------------------------");
+		System.err.println(message);
+		System.err.println(helpMessage);
+		System.exit(1);		
+	}
+
+	private static void generateConcordance(File file, URL url, File outfile) throws FileNotFoundException, ParseException, IOException {
+		PrintStream out = null;		
+		try {
+			if(outfile != null) {
+				if(outfile.exists()) outfile.delete();
+				outfile.createNewFile();
+				out = new PrintStream(outfile);
+			}
+			else out = System.out;
+			if(file != null) ConcordanceGenerator.generateConcordance(file, out);
+			if(url != null) ConcordanceGenerator.generateConcordance(url, out);
+		}
+		finally { if(outfile != null && out != null) out.close(); }
 	}
 }

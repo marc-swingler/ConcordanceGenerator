@@ -1,4 +1,4 @@
-This is a program called 'ConcordanceGenerator' that generates a concordance based on the contents of a file. The concordance it generates is an alphabetical list of all word occurrences, labeled with word frequencies, and sentence numbers in which each occurence appeared.
+This is a program called 'ConcordanceGenerator' that generates a concordance based on the contents of a file or url. The concordance it generates is an alphabetical list of all word occurrences, labeled with word frequencies, and sentence numbers in which each occurrence appeared.
 
 Building the program:
 	You'll need the following tools installed and their bin directories in your path:
@@ -13,26 +13,30 @@ Reviewing the source code:
 		mvn eclipse:eclipse
 
 Running the program:
-	You'll need the following tools installed and their bin directories in you path:
-		Java 1.7.0
-	1) Unzip the file 'target/concordance_generator-1.0.0-SNAPSHOT-final.zip'
-	2) The program may be run via a Windows Batch file or a Bash Shell script.
+	You'll need the following tools installed and their bin directories in you path: Java 1.7.0
+	Unzip the file 'target/concordance_generator-1.0.0-SNAPSHOT-final.zip'
+	The program may be run as a Windows Batch file or as a Bash Shell script.
 		Windows Batch File: use concordance_generator.bat
 		Bash Shell Script: use concordance_generator.sh
-	3) Both concordance_generator.bat and concordance_generator.sh work with the same options and defaults. The following options are available:
+	Both concordance_generator.bat and concordance_generator.sh work with the same options and defaults. The following options are available:
 		-f <filename>
-			This is the filename concordance_generator will use to build a concordance from. It defaults to 'artirary.txt' if no -f option is specified.
-			At most, one -f option may be used per run of concordance_generator.
-		-h or -?
-			Prints help information
-	4) The generated concordance will be printed to a file named concordance.txt.
+			This is the name of a document concordance_generator will use to build a concordance. The file must have a plain text format. At most, one -f or -u option may be used.
+		-u <urlString>
+			This is the url of a document concordance_generator will use to build a concordance. The file must have a plain text format. At most, one -f or -u option may be used.
+			Example URLs:
+				http://tinyurl.com/lh33p5u ('Hamlet' in text format)
+				http://tinyurl.com/6da9puc ('War and Peace' in text format)
+		-o <outfilename>
+			The file the concordance will be printed to. When not specified, the concordance will be printed to stdout. At most, one -o option may be used.
+		-h
+			Prints a help information message.
 
-Design Consierations:
-	I don't know what platform this program is intended be run on: Windows, *nix, or Mac. So I choose to implement in a common cross platofrm language: Java. I also had to consider implementing an English
-	language parser of my own, or looking for a natural language parser library. I did briefly consider using OpenNLP. I decided against it because I think the purpose of the task was probably more to
-	demonstrate general programmig skills rather than circumventing the problem through a library. So with that in mind, I opened my old 'Algorithms' text book and implemented a Red-Black tree to serve as
-	the data structure backing my concordance. Next, I wrote a simple parser called 'EnglishParser' using Javacc. The parser has a static method, parse, which takes two arguments: an interface named
-	Concordance and an InputStream. (Using an interface decouples classes ConcordanceImpl from the classes EnglishParser.) Please contact me if you have any questions.
+Design Considerations:
+
+	I don't know what platform this program is intended be run on: Windows, *nix, or Mac. So I choose to implement in a common cross platofrm language: Java. I also had to consider implementing an English language parser of my own, or looking for a natural language parser library. I did briefly consider using OpenNLP. I decided against it because I think the purpose of the task was probably more to demonstrate general programming skills rather than circumventing the problem through a library. So with that in mind, I opened my old 'Algorithms' text book and implemented a Red-Black tree to serve as the data structure backing my concordance. Next, I wrote a simple parser called 'EnglishParser' using Javacc. The parser has a static method, parse, which takes two arguments: an interface named Concordance and an InputStream. (Using an interface decouples classes ConcordanceImpl from the classes EnglishParser.) Also, I won't pretend the EnglishParser class actually parses English. Sentences such as "It's good to see you Dr. David Evans will see you now.", pose a serious issue for someone wanting to generalize on the structure of sentences. Probably the best way to handle ambiguous sentences with words like "e.g." is to simply list them out as exceptions. Also, there is the matter of numbers and other special characters. Consider the following: "39th", "&" (and), "@" (at): depending on how you think about it, all are words. So the parser I wrote is very liberal with it's definition of a "word."
+
+
+Please contact me if you have any questions,
 
 Marc Swingler
 marc.swingler@gmail.com
