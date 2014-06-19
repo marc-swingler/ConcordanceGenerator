@@ -1,3 +1,4 @@
+O
 This is a program called 'ConcordanceGenerator' that generates a concordance based on the contents of a file or url. The concordance it generates is an alphabetical list of all word occurrences, labeled with word frequencies, and sentence numbers in which each occurrence appeared.
 
 Building the program:
